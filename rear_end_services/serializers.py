@@ -1,42 +1,88 @@
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from rest_framework import serializers
-from .models import TerrorismData, Country, Attack, Weapon, Region, Target
+from .models import TerrorismData, Country, Attack, Weapon, Region, Target, Keyword
+        
 
-class TDInfoSerialier(serializers.ModelSerializer):
-    class Meta:
-        model = TerrorismData
-        fields = ('id', 'year', 'month', 'day', 'date', 'city',
-        'summary', 'suicide', 'group_name', 'motive', 'num_kill',
-        'num_wound', 'prop_value', 'prop_comment', 'country_id',
-        'region_id', 'attack_type', 'target_type', 'weapon_type')
-
-class TDGeoSerializer(GeoFeatureModelSerializer):
-    class Meta:
-        model = TerrorismData
-        geo_field = 'location'
-        id_field = 'id'
-
-class CountrySerializer(serializers.ModelSerializer):
+class CountryGeoSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = Country
-        fields = ('country_id', 'country_name')
+        geo_field = 'boundary'
+        fields = ('countryId', 'countryName', 'region')
+
+
+class RegionGeoSerializer(GeoFeatureModelSerializer):
+    class Meta:
+        model = Region
+        geo_field = 'boundary'
+        fields = ('regionId', 'regionName')
+
+
+class CountrySerializer(serializers.ModelSerializer):
+    # sumKill = serializers.SerializerMethodField()
+    # sumWound = serializers.SerializerMethodField()
+    # sumProp = serializers.SerializerMethodField()
+    class Meta:
+        model = Country
+        fields = ('countryId', 'countryName', 'region')
+
+
 
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Region
-        fields = ('region_id', 'region_name')
+        fields = ('regionId', 'regionName')
+
 
 class AttackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attack
-        fields = ('attack_type_id', 'attack_type_name')
+        fields = ('attackTypeId', 'attackTypeName')
+
 
 class TargetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Target
-        fields = ('target_type_id', 'target_type_name')
+        fields = ('targetTypeId', 'targetTypeName')
+
 
 class WeaponSerializer(serializers.ModelSerializer):
     class Meta:
         model = Weapon
-        fields = ('weapon_type_id', 'weapon_type_name')
+        fields = ('weaponTypeId', 'weaponTypeName')
+
+
+class KeywordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Keyword
+        fields = ('wordId', 'word', 'frequency')
+
+
+class TDInfoSerialier(GeoFeatureModelSerializer):
+    country = CountrySerializer()
+    region = RegionSerializer()
+    attackType = AttackSerializer()
+    weaponType = WeaponSerializer()
+    targetType = TargetSerializer()
+    # keywords = KeywordSerializer(many=True)
+    class Meta:
+        model = TerrorismData
+        geo_field = 'location'
+        fields = ('id', 'year', 'month', 'day', 'date', 'city',
+        'summary', 'suicide', 'groupName', 'motive', 'numKill',
+        'numWound', 'propValue', 'propComment', 'country',
+        'region', 'attackType', 'targetType', 'weaponType',)
+        
+
+
+class TDGeoSerializer(GeoFeatureModelSerializer):
+    country = CountrySerializer()
+    dayInYear = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TerrorismData
+        geo_field = 'location'
+        fields = ('id', 'year', 'month', 'day', 'city', 'country', 'dayInYear')
+    
+    def get_dayInYear(self, obj):
+        return obj.date.timetuple().tm_yday
+

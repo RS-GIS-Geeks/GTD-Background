@@ -25,7 +25,7 @@ SECRET_KEY = 'l9r6#medm(&dxjl&16ur8tze&jx*v*-(!%ap_mn6slnz1=g+b$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['47.94.208.122', '127.0.0.1']
 
 
 # Application definition
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'rest_framework',
     'rest_framework_gis',
+    'rest_framework_swagger',
 ]
 
 MIDDLEWARE = [
@@ -132,5 +133,6 @@ STATIC_ROOT = '/var/www/script/static/terrorism_rear_end/'
 STATIC_URL = '/static/terrorism_rear_end/'
 
 REST_FRAMEWORK = {
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
 }
