@@ -3,7 +3,9 @@
 /.vscode
 /terrorism_rear_end/data
 /data
-/__pycache__
-/rear_end_services/__pycache__
-/rear_end_services/migartions/__pycache__
-/terrorism_rear_end/__pycache__
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+local_settings.py
+db.sqlite3
